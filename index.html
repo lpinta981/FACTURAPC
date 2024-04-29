@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FACTURA</title>
+<style>
+  /* Estilos para ajustar el tamaño de la factura */
+  body {
+    margin: 0;
+    padding: 0;
+    width: 72mm; /* Ancho */
+    height: 210mm; /* Alto */
+    border: 0.02mm solid yellow; /* Borde amarillo */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    font-family: Arial, sans-serif; /* Fuente Arial */
+  }
+  .factura {
+    box-sizing: border-box; /* Incluir el borde en el tamaño total */
+    padding-top: 20mm; /* Espacio en blanco de 15mm en la parte superior */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centrar verticalmente */
+    align-items: center; /* Centrar horizontalmente */
+  }
+  .encabezado {
+    width: 100%; /* Ocupar todo el ancho disponible */
+  }
+  .encabezado table {
+    width: 100%; /* Ocupar todo el ancho disponible */
+    border-collapse: collapse; /* Colapsar bordes */
+    font-size: 10px; /* Tamaño de fuente más pequeño */
+  }
+  .encabezado th,
+  .encabezado td {
+    border: 1px solid white; /* Borde de las celdas */
+    padding: 0px; /* Espaciado interno */
+    width: 25%; /* Ancho igual para cada celda */
+    font-weight: bold; /* Texto en negrilla */
+    text-align: center; /* Alinear texto al centro */
+  }
+  .encabezado th:first-child,
+  .encabezado td:first-child {
+    text-align: right; /* Alinear texto a la derecha */
+  }
+  .encabezado td:last-child {
+    text-align: left; /* Alinear texto a la izquierda */
+  }
+  .encabezado th[colspan],
+  .encabezado td[colspan] {
+    text-align: center; /* Alinear texto al centro */
+  }
+  .productos table {
+    width: 100%; /* Ocupar todo el ancho disponible */
+    border-collapse: collapse; /* Colapsar bordes */
+    font-size: 10px; /* Tamaño de fuente más pequeño */
+  }
+  .productos th,
+  .productos td {
+    border: 1px solid #ee8e79; /* Borde de las celdas */
+    padding: 5px; /* Espaciado interno */
+    text-align: center; /* Alinear texto al centro */
+  }
+  .productos th {
+    font-weight: bold; /* Texto en negrilla */
+  }
+  .productos th:first-child,
+  .productos td:first-child {
+    text-align: right; /* Alinear texto a la derecha */
+  }
+  .productos td:first-child,
+  .productos td:nth-child(3),
+  .productos td:last-child {
+    text-align: right; /* Alinear texto a la derecha */
+  }
+  .productos td:nth-child(2) {
+    text-align: center; /* Alinear texto al centro */
+  }
+  .total table {
+    width: 100%; /* Ocupar todo el ancho disponible */
+    border-collapse: collapse; /* Colapsar bordes */
+    font-size: 10px; /* Tamaño de fuente más pequeño */
+  }
+  .total th,
+  .total td {
+    border: 1px solid #ee8e79; /* Borde de las celdas */
+    padding: 5px; /* Espaciado interno */
+    text-align: center; /* Alinear texto al centro */
+  }
+  .total th {
+    font-weight: bold; /* Texto en negrilla */
+  }
+  .total th:first-child,
+  .total td:first-child {
+    text-align: right; /* Alinear texto a la derecha */
+  }
+  .total td:first-child,
+  .total td:last-child {
+    text-align: right; /* Alinear texto a la derecha */
+  }
+  .total td:nth-child(2) {
+    text-align: left; /* Alinear texto a la izquierda */
+  }
+  .total td span:before {
+    content: "$"; /* Añadir el símbolo de dólar */
+  }
+  @page {
+    size: 72mm 210mm; /* Establecer el tamaño de la página */
+  }
+  @media print {
+    /* Estilos específicos para la impresión */
+    body {
+      width: 72mm; /* Ancho */
+      height: 210mm; /* Alto */
+    }
+  }
+</style>
+</head>
+<body>
+  <!-- Contenedor de la factura -->
+  <div class="factura">
+    <!-- Contenido de la factura -->
+    <div class="encabezado">
+      <table>
+        <tr>
+          <th colspan="2">NOMBRE/RAZÓN SOCIAL:</th>
+        </tr>
+        <tr>
+          <td colspan="2" id="nombre_cliente"></td>
+        </tr>
+        <tr>
+          <td>Ruc/Cédula:</td>
+          <td><span id="cedula_cliente"></span></td>
+        </tr>
+        <tr>
+          <td>Dirección:</td>
+          <td><span id="direccion_cliente"></span></td>
+        </tr>
+        <tr>
+          <td>Teléfono:</td>
+          <td><span id="telefono_cliente"></span></td>
+        </tr>
+        <tr>
+          <td>Fecha y Hora:</td>
+          <td><span id="fecha"></span></td>
+        </tr>
+      </table>
+    </div>
+    <!-- Detalles de la factura (Productos) -->
+    <div class="productos">
+      <table id="tablaProductos">
+        <tr>
+          <th>CANT.</th>
+          <th>DESCRIPCIÓN</th>
+          <th>P. U</th>
+          <th>P. T</th>
+        </tr>
+      </table>
+    </div>
+    <br>
+    <!-- Total de la factura -->
+    <div class="total">
+      <table style="width: 100%;">
+        <tr>
+          <td style="font-weight: normal; border-bottom: 1px solid green;">SUBTOTAL: <span id="subtotal_id"></span></td>
+          <td style="font-weight: normal; border-bottom: 1px solid green;">DSCTO: <span id="descuento_id"></span></td>
+        </tr>
+        <tr>
+          <td colspan="2" style="font-weight: bold; text-align: right; border: 1px solid green;">TOTAL: <span id="total_id"></span></td>
+        </tr>
+      </table>
+    </div>
+    <footer>
+      <!-- Información adicional o logotipo de la empresa -->
+    </footer>
+  </div>
+  <script>
+    // Obtener los parámetros de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Obtener los valores de los parámetros y asignarlos a las variables correspondientes
+    const nombreCliente = urlParams.get('nombre_cliente') || "APELLIDO1 APELLIDO2 NOMBRE1 NOMBRE2";
+    const cedulaCliente = urlParams.get('cedula_cliente') || "17xxxxxxxxxxxxx";
+    const direccionCliente = urlParams.get('direccion_cliente') || "CALLE1 NCASA INTERSECCION";
+    const telefonoCliente = urlParams.get('telefono_cliente') || "09xxxxxxxx";
+    const fecha = urlParams.get('fecha') || "dd/mm/aaaa hh:mm:ss";
+
+    // Asignar los valores a los elementos HTML correspondientes
+    document.getElementById("nombre_cliente").textContent = nombreCliente;
+    document.getElementById("cedula_cliente").textContent = cedulaCliente;
+    document.getElementById("direccion_cliente").textContent = direccionCliente;
+    document.getElementById("telefono_cliente").textContent = telefonoCliente;
+    document.getElementById("fecha").textContent = fecha;
+
+    // Obtener los datos de los productos y llenar la tabla
+    const cantidades = urlParams.get('cantidades') || "0";
+    const descripciones = urlParams.get('servicios') || "No hay artículos";
+    const pUnits = urlParams.get('p_units') || "0.00";
+    const pTotal = urlParams.get('p_total') || "0.00";
+    const total = urlParams.get('total') || "0.00";
+    const subtotal = urlParams.get('subtotal') || "0.00";
+    const descuento = urlParams.get('descuento') || "0.00";
+
+    const cantidadesArray = cantidades.split(",");
+    const descripcionesArray = descripciones.split(","); 
+    const pUnitsArray = pUnits.split(",");
+    const pTotalArray = pTotal.split(",");
+    
+    const tablaProductos = document.getElementById("tablaProductos");
+
+    cantidadesArray.forEach((value, id) => {
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td>${cantidadesArray[id]}</td>
+            <td>${descripcionesArray[id]}</td>
+            <td>$${parseFloat(pUnitsArray[id]).toFixed(2)}</td>
+            <td>$${parseFloat(pTotalArray[id]).toFixed(2)}</td>
+        `;
+        tablaProductos.appendChild(newRow);
+    });
+
+    // Asignar los valores de total, subtotal y descuento
+    document.getElementById("total_id").textContent = parseFloat(total).toFixed(2);
+    document.getElementById("subtotal_id").textContent = parseFloat(subtotal).toFixed(2);
+    document.getElementById("descuento_id").textContent = parseFloat(descuento).toFixed(2);
+
+    // Imprimir la factura automáticamente al cargar la página
+    window.print();
+  </script>
+</body>
+</html>
